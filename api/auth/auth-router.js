@@ -7,30 +7,30 @@ router.post("/register", async (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
-    return res.send("username and password required");
+    return res.status(403).json("username and password required");
   }
 
   const userExist = await getByUsername(username);
   if (userExist) {
-    return res.send("username taken");
+    return res.status(403).json("username taken");
   }
 
   const salt = bcrypt.genSaltSync(10);
   const passwordHash = bcrypt.hashSync(password, salt);
   const newUser = await insert({ username, password: passwordHash });
-  return res.send(newUser);
+  return res.status(200).json(newUser);
 });
 
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
-    return res.send("username and password required");
+    return res.status(403).json("username and password required");
   }
 
   const userExist = await getByUsername(username);
 
   if (!userExist || !bcrypt.compareSync(password, userExist.password)) {
-    return res.send("invalid credentials");
+    return res.status(401).json("invalid credentials");
   } else {
     const token = jwt.sign(
       {
@@ -42,7 +42,7 @@ router.post("/login", async (req, res) => {
         expiresIn: '1d'
       }
     );
-    return res.send({
+    return res.status(200).json({
       message: `welcome, ${username}`,
       token,
     });
