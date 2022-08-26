@@ -6,7 +6,7 @@ module.exports = (req, res, next) => {
     return res.status(401).json("token required");
   }
   try {
-    const decoded = jwt.verify(token, process.env.SECRET);
+    const decoded = jwt.verify(token, process.env.SECRET || 'TestSecretKey');
     req.user = decoded;
     next();
   } catch (error) {

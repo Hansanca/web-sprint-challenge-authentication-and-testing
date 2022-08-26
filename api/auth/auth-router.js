@@ -37,7 +37,7 @@ router.post("/login", async (req, res) => {
         id: userExist.id,
         username: userExist.username,
       },
-      process.env.SECRET,
+      process.env.SECRET || 'TestSecretKey',
       {
         expiresIn: '1d'
       }
